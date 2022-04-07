@@ -25,7 +25,7 @@ export default {
     .logo__text {
         display: flex;
         align-items: center;
-        color: #ed5022;
+        color: #5a7fc2;
         text-transform: uppercase;
         font-size: 20px;
     }

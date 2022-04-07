@@ -11,10 +11,10 @@ export default {
 <style>
     .btn {
         padding: 8px 10px;
-        border: 1px solid #ed5022;
+        border: 1px solid #5a7fc2;
         border-radius: 15px;
         background-color: transparent;
-        color: #ed5022;
+        color: #5a7fc2;
         cursor: pointer;
         margin-right: 15px;
         font-size: 18px;

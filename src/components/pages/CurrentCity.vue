@@ -1,106 +1,87 @@
 <template>
     <article class="city-weather">
-      <app-container class="city-weather__container">
+      <app-container v-if="isDataLoaded" class="city-weather__container">
         <app-current-weather 
         :name="city"
         :currentData="currentCityData" 
-        class="city-weather__weather"></app-current-weather>
+        class="city-weather__crnt-weather"></app-current-weather>
+        <app-daily-weather
+        :days="dailyWeather"
+        class="city-weather__daily-weather"
+        >
+
+        </app-daily-weather>
       </app-container>
+    <div v-else class="loading-screen">
+      <h1>Идет загрузка...</h1>
+      <app-button @click="getCurrentLocation" v-if="errorBtn" style="margin-top: 50px">Попробовать ещё раз</app-button>
+    </div> 
     </article>
 </template>
 <script>
+/* eslint-disable */
 import AppCurrentWeather from '@/components/AppCurrentWeather'
 import AppContainer from '@/components/AppContainer'
+import AppDailyWeather from '@/components/AppDailyWeather'
+import AppButton from '@/components/UI/AppButton'
+import {mapState, mapActions, mapMutations} from 'vuex'
 export default {
   components: {
     AppContainer,
     AppCurrentWeather,
+    AppDailyWeather,
+    AppButton,
   },
-  data() {
-    return {
-      city: '',
-      currentCityData: {
-        month: '',
-        date: '',
-        time: '',
-        temp: '',
-        windSpeed: '',
-        windDir: '',
-        cloudness: '',
-        pressure: '',
-        humidity: '',
-        icon: null,
-      },
-      
-    }
+
+  computed: {
+    ...mapState({
+    isDataLoaded: state => state.current.isDataLoaded,
+    lon: state => state.current.lon,
+    lat: state => state.current.lat,
+    errorBtn: state => state.current.errorButton,
+    city: state => state.current.city,
+    currentCityData: state => state.current.currentCityData,
+    dailyWeather: state => state.current.dailyWeather,
+    }),
+
   },
 
   methods: {
-    async getCurrentWeather() {
-      fetch(`https://api.openweathermap.org/data/2.5/weather?q=Tomsk,ru&appid=84bea86b6e84affc971c5ed48003ecea`)
-      .then(response => {
-        return response.json()
-      })
-      .then(data => {
-        this.setCurrentCityData(data)
-      })
-    },
+    ...mapMutations({
+    setLon: 'current/setLon',
+    setLat: 'current/setLat',
+    setCity: 'current/setCity',
+    setCurrentCityData: 'current/setCurrentCityData',
+    setErrorButton: 'current/setErrorButton',
+    setDataLoaded: 'current/setDataLoaded'
+  }),
 
-    async getGeolocation() {
-      let resolve = await fetch('https://api.db-ip.com/v2/free/self');
-      let data = await resolve.json();
-      this.city = data['city'].toUpperCase()
-    },
-
-
-    setCurrentCityData(data) {
-      let date = new Date(data.dt * 1000 + data.timezone * 1000) ;
-      let months = ['ЯНВ', 'ФЕВ', 'МАР', 'АПР', 'МАЙ', 'ИЮН', 'ИЮЛ', 'АВГ', 'СЕН', 'ОКТ', 'НОЯ', 'ДЕК',] 
-      this.currentCityData.month = months[date.getMonth()]
-      this.currentCityData.date = date.getDate()
-      this.currentCityData.time = `${date.getUTCHours()}:${date.getMinutes()}`
-      this.currentCityData.temp = `${Math.trunc(data.main.temp - 273)}°C`
-      this.currentCityData.windSpeed = `${data.wind.speed} м/с`
-      this.currentCityData.windDir = convertWindDeg(data.wind.deg)
-      this.currentCityData.cloudness = `${data.clouds.all}%`
-      this.currentCityData.pressure = `${data.main.pressure * 0.75} мм.рт.ст.`
-      this.currentCityData.humidity = `${data.main.humidity}%`
-      this.currentCityData.icon = `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`
-
-      function convertWindDeg(value) {
-        let degrees = 
-          {    
-          23: 'C', 
-          45: 'СВ',
-          68: 'СВ',
-          90: 'В',
-          113: 'В',
-          135: 'ЮВ',
-          158: 'ЮВ',
-          180: 'Ю',
-          203: 'Ю',
-          225: 'ЮЗ',
-          248: 'ЮЗ',
-          270: 'З',
-          293: 'З',
-          315: 'СЗ',
-          338: 'СЗ',
-          360: 'С',
-        }
-        let keys= Object.keys(degrees)
-        let dir = keys.find(d => value < d)
-        return degrees[dir]
-      }
-    }
-
+    ...mapActions({
+    getCurrentWeather: 'current/getCurrentWeather',
+    getCurrentLocation: 'current/getCurrentLocation'
+    }),
+   
   },
-
+  
    async mounted(){
-    await this.getGeolocation()
-    await this.getCurrentWeather()
+    this.getCurrentLocation()
   },
 }
 </script>
 <style>
-    
+    .city-weather__container {
+      display: flex;
+      justify-content: space-around;
+      max-width: 1500px;
+    }
+
+
+    .loading-screen {
+      text-align: center;
+    }
+
+    .map {
+      width: 500px;
+      height: 500px;
+    }
 </style>

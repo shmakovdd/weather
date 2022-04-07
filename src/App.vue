@@ -24,6 +24,14 @@ export default {
     max-height: 100%;
   }
 
+  li {
+      list-style: none;
+  }
+
+  .app {
+    overflow: hidden;
+  }
+
   * {
     margin: 0;
     padding: 0;
