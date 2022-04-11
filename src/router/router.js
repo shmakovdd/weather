@@ -1,7 +1,8 @@
 import {createRouter, createWebHashHistory} from "vue-router";
 import CurrentCity from '@/components/pages/CurrentCity'
-import AppMain from '@/components/pages/AppMain'
 import CitiesList from '@/components/pages/CitiesList'
+import LoginForm from '@/views/LoginForm'
+import RegisterForm from '@/views/RegisterForm'
 
 const routes = [
     {
@@ -9,12 +10,16 @@ const routes = [
         component: CurrentCity,
     },
     {
-        path: '/main',
-        component: AppMain
-    },
-    {
         path: '/cities',
         component: CitiesList,
+    },
+    {
+        path: '/login',
+        component: LoginForm
+    },
+    {
+        path: '/reg',
+        component: RegisterForm
     }
 
 ]

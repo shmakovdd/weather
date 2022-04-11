@@ -9,11 +9,37 @@
 
 <script>
 import AppHeader from '@/components/AppHeader'
+import { mapActions, mapMutations, mapState } from 'vuex'
+import {getCookie} from '@/store/utils'
 export default {
 
   components: {
     AppHeader,
   },
+  computed: {
+    ...mapState({
+      isAuth: state => state.isAuth
+    })
+  },
+  methods: {
+    ...mapMutations({
+      setAuth: 'setAuth'
+    }),
+    ...mapActions({
+      getFavorites: 'favorite/getFavorites'
+    }),
+    checkCookie() {
+      if (getCookie('authToken')) {
+        this.setAuth(true)
+      }
+    },
+    
+
+  },
+  mounted() {
+    this.checkCookie()
+    this.isAuth && this.getFavorites()
+  }
 
 }
 </script>

@@ -1,26 +1,33 @@
 <template>
-    <li class="city-item" @click="setLongAndLat" :data-long='city.cityLong' :data-lat='city.cityLat'>
-        <span class="city-name" :data-long='city.cityLong' :data-lat='city.cityLat'>{{(city.cityName).toUpperCase()}}</span>
-        <span class="city-area" :data-long='city.cityLong' :data-lat='city.cityLat'>({{city.cityArea}})</span>
+    <li class="city-item" @click.stop="findCityByID" :data-id="city.api_city_id">
+        <span class="city-name" :data-id="city.api_city_id" >{{toUpperCaseCityName}}</span>
     </li>
 </template>
 <script>
-import { mapMutations} from 'vuex'
+import { mapActions, mapMutations } from 'vuex'
 export default {
     props: {
         city: {
             type: Object,
         }
     }, 
+    computed: {
+        toUpperCaseCityName() {
+            return this.city.name.toUpperCase()
+        }
+    },
     methods: {
-        ...mapMutations({
-            setLon: 'current/setLon',
-            setLat: 'current/setLat',
+        
+        ...mapActions({
+            getWeather: 'current/getCurrentWeatherById',
         }),
-        setLongAndLat(e) {
-            this.setLon(e.target.dataset.long)
-            this.setLat(e.target.dataset.lat)
+        ...mapMutations({
+            setCityID: 'current/setCityID'
+        }),
+        findCityByID(e) {
+            this.getWeather(e.target.dataset.id)
             this.$router.push('/')
+            this.setCityID(this.city.id)
         }
     }
 }
@@ -37,12 +44,6 @@ export default {
         display: block
 
     }
-
-    /* .city-item:after {
-        content: 'ПЕРЕЙТИ НА СТРАНИЦУ ГОРОДА';
-        display: none;
-        margin-left: 25px;
-    } */
 
     .city-item:hover {
         background-color: #e9f5f3;

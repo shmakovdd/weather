@@ -1,15 +1,25 @@
 <template>
-    <div class="favorite-btn">
-        <span @click="addToFav" v-if="!isInFavorite" class="favorite-btn__text">Добавить город в избранное</span>
-        <span @click="removeFromFav" v-else class="favorite-btn__text">Удалить из избранного</span>
+    <div v-if="cityID !== null" class="favorite-btn__wrapper">
+        <div v-if="auth" class="favorite-btn__btn">
+            <span @click="addToFav" v-if="!getIsInFavorite" class="favorite-btn__text">Добавить город в избранное</span>
+            <span @click="removeFromFav" v-else class="favorite-btn__text">Удалить из избранного</span>
+        </div>
+        <div v-else class="favorite-btn__plug">
+            <span>Авторизируйтесь, чтобы добавить в избранное</span>
+        </div>
     </div>
+   
 </template>
 <script>
-import {mapActions, mapState} from 'vuex'
+import {mapActions, mapGetters, mapState} from 'vuex'
 export default {
     computed: {
         ...mapState({
-            isInFavorite: state => state.favorite.isInFavorite,
+            auth: state => state.isAuth,
+            cityID: state => state.current.cityID 
+        }),
+        ...mapGetters({
+            getIsInFavorite: 'favorite/getIsInFavorite'
         })
     },
     methods: {
@@ -25,7 +35,7 @@ export default {
 }
 </script>
 <style>
-    .favorite-btn {
+    .favorite-btn__btn {
         color: #ed5022;
         font-weight: bold;
         cursor: pointer;

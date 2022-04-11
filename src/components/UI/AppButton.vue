@@ -25,6 +25,7 @@ export default {
     }
 
     .btn:hover {
-        opacity: 0.6;
+        border-color: #ed5022;
+        color: #ed5022;
     }
 </style>

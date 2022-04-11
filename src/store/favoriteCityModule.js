@@ -1,64 +1,96 @@
+import axios from "axios";
+import { getCookie } from "@/store/utils";
 
 export const favoriteCityModule = {
-    state: () => ({
-        isInFavorite: false,
-        favoriteList: [
+  state: () => ({
+    isInFavorite: false,
+    favoriteList: [],
+  }),
 
-        ], 
-    }),
-    mutations: {
-        setIsInFavorite(state, payload) {
-            state.isInFavorite = payload
-        },
-        setFavoriteList(state, payload) {
-            state.favoriteList = payload
-        }
+  getters: {
+    getFavoriteList(state) {
+      return state.favoriteList;
     },
-    actions: {
-
-        deleteCity({state, commit, dispatch}, e) { // удаляем город из избранного по нажатию на кнопку "Удалить"
-            let lon = e.target.dataset.lon
-            let lat = e.target.dataset.lat
-            let newFavList = state.favoriteList.filter(city =>{
-                if (city.lon !== lon && city.lat !== lat) return true
-            });
-            console.log(e.target);
-            commit('setFavoriteList', newFavList)
-            dispatch('checkIfInFav')
-        },
-
-        addToFav({state, commit, rootState}) { // добавляем город в избранное 
-            let lon = rootState.current.lon
-            let lat = rootState.current.lat
-            let name = rootState.current.city
-            commit('setIsInFavorite', true)
-            let favCity = {
-                lat,
-                lon,
-                name
-            }
-            state.favoriteList.push(favCity)
-        },
-        removeFromFav({commit, state, rootState}) { // удаляем город из избранного
-            let name = rootState.current.city
-            commit('setIsInFavorite', false)
-            let newFavList = state.favoriteList.filter(city => city.name !== name);
-            commit('setFavoriteList', newFavList)
-        },
-        checkIfInFav({rootState, commit, state}) { // проверяем, есть ли город в избранном
-            let isCityFound = state.favoriteList.find(city => {
-                if (city.lon == rootState.current.lon && 
-                    city.lat == rootState.current.lat){
-                    return true
-                }
-            })
-
-            if(isCityFound) {
-                commit('setIsInFavorite', true)
-            } else {
-                commit('setIsInFavorite', false)
-            }
-        }
+    getIsInFavorite(state) {
+      return state.isInFavorite;
     },
-    namespaced: true
-}
+  },
+  mutations: {
+    setIsInFavorite(state, payload) {
+      state.isInFavorite = payload;
+    },
+    setFavoriteList(state, payload) {
+      state.favoriteList = payload;
+    },
+  },
+  actions: {
+    getFavorites({ commit, dispatch }) {
+      axios({
+        method: "GET",
+        url: "https://front-test.academy.smartworld.team/api/City/getFavourite",
+        headers: {
+          Authorization: `Bearer ${getCookie("authToken")}`,
+        },
+      }).then((response) => {
+        let data = response.data;
+        commit("setFavoriteList", data.data);
+        dispatch("checkIfInFav");
+      });
+    },
+    deleteCity({ dispatch }, e) {
+      // удаляем город из избранного по нажатию на кнопку "Удалить"
+      let id = e.target.dataset.id;
+      axios({
+        method: "DELETE",
+        url: `https://front-test.academy.smartworld.team/api/City/remove/${id}`,
+        headers: {
+          Authorization: `Bearer ${getCookie("authToken")}`,
+        },
+      }).then(() => {
+        dispatch("getFavorites");
+      });
+    },
+
+    addToFav({ rootState, dispatch }) {
+      let id = rootState.current.cityID;
+      axios({
+        method: "POST",
+        url: `https://front-test.academy.smartworld.team/api/City/add/${id}`,
+        headers: {
+          Authorization: `Bearer ${getCookie("authToken")}`,
+        },
+      }).then(() => {
+        dispatch("getFavorites");
+      });
+    },
+    removeFromFav({ dispatch, rootState }) {
+      // удаляем город из избранного
+      let id = rootState.current.cityID;
+      axios({
+        method: "DELETE",
+        url: `https://front-test.academy.smartworld.team/api/City/remove/${id}`,
+        headers: {
+          Authorization: `Bearer ${getCookie("authToken")}`,
+        },
+      }).then(() => {
+        dispatch("getFavorites");
+      });
+    },
+    checkIfInFav({ rootState, commit, getters }) {
+      // проверяем, есть ли город в избранном
+      let getFavoriteList = getters.getFavoriteList;
+      let isCityFound = getFavoriteList.find((city) => {
+        if (city.id === rootState.current.cityID) {
+          return true;
+        }
+      });
+
+      if (isCityFound) {
+        commit("setIsInFavorite", true);
+      } else {
+        commit("setIsInFavorite", false);
+      }
+    },
+  },
+  namespaced: true,
+};

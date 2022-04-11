@@ -5,6 +5,7 @@ import { favoriteCityModule } from "@/store/favoriteCityModule";
 
 export default createStore({
     state: () => ({
+        isAuth: false,
         clientLong: null,
         clientLat: null,
         clientCity: null,
@@ -12,6 +13,9 @@ export default createStore({
     mutations: {
         setClientCity(state, payload) {
             state.clientCity = payload
+        },
+        setAuth(state, payload) {
+            state.isAuth = payload
         }
     },
 

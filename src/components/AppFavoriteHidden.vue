@@ -1,44 +1,28 @@
 <template>
     <div class="favorite-hidden">
         <ul v-if="favoriteList.length >= 1" class="favorite-hidden__list">
-            <li  v-for="city, index in favoriteList"
-                :key="index" class="favorite-hidden__item">
-                <div @click="setLongAndLat" :data-lon="city.lon" :data-lat="city.lat" class="favorite-hidden__city-name">{{city.name}}</div>
-                <span @click="deleteCity" :data-lon="city.lon" :data-lat="city.lat" class="favorite-hidden__delete">Удалить</span>
-                </li>
+            <favorite-item v-for="city in favoriteList"
+            :key="city.id"
+            :city="city"
+            class="favorite-hidden__item"/>
         </ul>
         <div v-else  class="favorite-hidden__plug">Нет городов в избранном.</div>    
     </div>
 </template>
 <script>
-import {mapMutations, mapActions, mapState} from 'vuex'
+import {mapState} from 'vuex'
+import FavoriteItem from '@/components/FavoriteItem'
 export default {
+    components: {
+        FavoriteItem
+    },
+
     computed: {
     ...mapState({
         favoriteList: state => state.favorite.favoriteList
     })
     },
-    methods: {
-        ...mapMutations({
-            setLon: 'current/setLon',
-            setLat: 'current/setLat',
-        }),
-        ...mapActions({
-            deleteCity: 'favorite/deleteCity',
-            getCurrentLocation: 'current/getCurrentLocation',
-            checkIfInFav: 'favorite/checkIfInFav'
-        }),
-        setLongAndLat(e) { 
-            this.setLon(e.target.dataset.lon)
-            this.setLat(e.target.dataset.lat)
-            this.$router.push('/')
-            let crntRoute = this.$router.currentRoute.value.path
-            if(crntRoute === '/') { // если мы находимся на стартовой странице, то получаем данные города и проверям избранное
-                this.getCurrentLocation()
-                this.checkIfInFav()
-            }
-        },
-    }
+
 
 }
 </script>

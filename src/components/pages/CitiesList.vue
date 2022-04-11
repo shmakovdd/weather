@@ -4,19 +4,18 @@
             <input :model-value="searchQuery" @input="onInput" type="text" class="cities__search" placeholder="Поиск...(англ)">
             <ul class="cities__list">
                 <city-item
-                    v-for="city, index in searchedCities"
-                    :key="index"
+                    v-for="city in searchedCities"
+                    :key="city.id"
                     :city="city"
                 />
             </ul>
-            <div v-intersection="loadMoreCities" class="intersection-el"></div>
         </app-container>
     </div>
 </template>
 <script>
 import CityItem from '@/components/CityItem'
 import AppContainer from '@/components/AppContainer'
-import {mapActions, mapMutations, mapState, mapGetters} from 'vuex'
+import {mapActions, mapState, mapGetters,mapMutations} from 'vuex'
 export default {
     components: {
         AppContainer,
@@ -29,32 +28,27 @@ export default {
             cities: state => state.cities.cities,
             searchQuery: state => state.cities.searchQuery
         }),
-
         ...mapGetters({
             searchedCities: 'cities/searchedCities'
         })
 
     },
     methods: {
+        ...mapMutations({
+            setSearchQuery: 'cities/setSearchQuery'
+        }),
         onInput(e) {
             let value = e.target.value
             this.setSearchQuery(value)
         },
 
         ...mapActions({
-            loadMoreCities: 'cities/loadMoreCities',
             loadCities: 'cities/loadCities'
         }),
-        ...mapMutations({
-            setCities: 'cities/setCities',
-            setLoadedCities: 'cities/setLoadedCities',
-            setSearchQuery: 'cities/setSearchQuery'
-        })
     },
     mounted() {
-        this.loadCities()  
-
-    },
+        this.loadCities()
+    }
 }
 </script>
 <style>

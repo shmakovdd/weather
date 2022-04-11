@@ -21,9 +21,6 @@ export default {
             type: Object,
         }
     },
-    computed: {
-
-    }
 }
 </script>
 <style scoped>
