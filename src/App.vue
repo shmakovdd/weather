@@ -27,7 +27,8 @@ export default {
       setAuth: 'setAuth'
     }),
     ...mapActions({
-      getFavorites: 'favorite/getFavorites'
+      getFavorites: 'favorite/getFavorites',
+      initCentrifuge: 'initCentrifuge',
     }),
     checkCookie() {
       if (getCookie('authToken')) {
@@ -39,7 +40,10 @@ export default {
   },
   mounted() {
     this.checkCookie()
-    this.isAuth && this.getFavorites();
+    if (this.isAuth) {
+    this.getFavorites()
+    this.initCentrifuge()
+    }
   }
 
 }

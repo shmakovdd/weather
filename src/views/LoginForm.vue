@@ -69,11 +69,12 @@ export default {
             let {token, expires_in} = authToken
             setCookie('authToken', token, {'max-age': expires_in})
             setCookie('socketToken', socketToken)
+            setCookie('userId', userId)
             this.setAuth(true);
             this.$router.push("/");
             this.loadCities()
             this.getFavorites()
-            this.initCentrifuge({socketToken, userId})
+            this.initCentrifuge()
           }
       })
     },

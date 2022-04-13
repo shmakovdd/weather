@@ -6,7 +6,7 @@
           v-for="city in favoriteList"
           :key="city.id"
           class="favorite-brief__item"
-          @click.self="findCityByID"
+          @click="findCityByID"
           :data-api_id="city.api_city_id"
           :data-id="city.id"
         >
@@ -51,10 +51,10 @@ export default {
         getCurrentWeatherById: 'current/getCurrentWeatherById'
         }),
         findCityByID(e) {
-            console.log(e.target);
-            this.getCurrentWeatherById(e.target.dataset.api_id)
+            console.log(e.currentTarget);
+            this.getCurrentWeatherById(e.currentTarget.dataset.api_id)
             this.$router.push('/')
-            this.setCityID(e.target.dataset.id)
+            this.setCityID(e.currentTarget.dataset.id)
         }
   },
 };
