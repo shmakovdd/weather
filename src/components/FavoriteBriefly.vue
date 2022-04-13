@@ -51,7 +51,6 @@ export default {
         getCurrentWeatherById: 'current/getCurrentWeatherById'
         }),
         findCityByID(e) {
-            console.log(e.currentTarget);
             this.getCurrentWeatherById(e.currentTarget.dataset.api_id)
             this.$router.push('/')
             this.setCityID(e.currentTarget.dataset.id)

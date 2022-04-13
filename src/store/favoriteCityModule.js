@@ -111,7 +111,7 @@ export const favoriteCityModule = {
       // проверяем, есть ли город в избранном
       let getFavoriteList = getters.getFavoriteList;
       let isCityFound = getFavoriteList.find((city) => {
-        if (city.id === rootState.current.cityID) {
+        if (city.id == rootState.current.cityID) {
           return true;
         }
       });
