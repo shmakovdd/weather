@@ -46,7 +46,7 @@ export default {
             axios({
                 method: 'POST', 
                 headers: {
-                    'Authorization': `Bearer ${getCookie('authToken')}`
+                    Authorization: `Bearer ${getCookie('authToken')}`
                 },
                 url: 'https://front-test.academy.smartworld.team/api/api/logout'
             }).then(

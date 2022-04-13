@@ -48,13 +48,5 @@ export default {
         margin-bottom: 10px;
     }
 
-    .favorite-hidden__city-name{
-        margin-right: auto;
-        cursor: pointer;
-    }
 
-    .favorite-hidden__delete {
-        margin-left: 20px;
-        cursor: pointer;
-    }
 </style>

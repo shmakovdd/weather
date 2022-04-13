@@ -8,6 +8,7 @@
         type="email"
         name="email"
         placeholder="Email"
+        required
       />
       <form-input
         v-model="password"
@@ -15,6 +16,7 @@
         type="password"
         name="password"
         placeholder="Пароль"
+        required
       />
       <app-button @click="logIn" class="login-from__button">Войти</app-button>
     </div>
@@ -25,7 +27,7 @@ import FormInput from "@/components/UI/FormInput";
 import AppButton from "@/components/UI/AppButton";
 import axios from "axios";
 import { mapActions, mapMutations } from "vuex";
-import {setCookie, } from '@/store/utils'
+import { setCookie, } from '@/store/utils'
 export default {
   components: {
     FormInput,
@@ -45,7 +47,8 @@ export default {
     }),
     ...mapActions({
         loadCities: "cities/loadCities",
-        getFavorites: "favorite/getFavorites"
+        getFavorites: "favorite/getFavorites",
+        initCentrifuge: "initCentrifuge"
     }),
     logIn() {
       let body = {
@@ -60,15 +63,18 @@ export default {
           "Content-Type": "application/json",
         },
       }).then((response) => {
-          let data = response.data
-        if (data.message === "Logged") {
-            let {token, expires_in} = data.data.authToken
+           let {authToken, socketToken, userId} = response.data.data;
+            let message = response.data.message;
+          if (message === "Logged") {
+            let {token, expires_in} = authToken
             setCookie('authToken', token, {'max-age': expires_in})
-          this.setAuth(true);
-          this.$router.push("/");
-          this.loadCities()
-          this.getFavorites()
-        }
+            setCookie('socketToken', socketToken)
+            this.setAuth(true);
+            this.$router.push("/");
+            this.loadCities()
+            this.getFavorites()
+            this.initCentrifuge({socketToken, userId})
+          }
       })
     },
   },

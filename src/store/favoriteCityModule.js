@@ -24,6 +24,36 @@ export const favoriteCityModule = {
     },
   },
   actions: {
+
+    getCitiesWeatherInfo({state}) { // берём инфу о погоде по всем городам
+      if(state.favoriteList.length) {
+        state.favoriteList.forEach(item => {
+          if(!item.isLoaded) {
+            createCityObj(item, item['api_city_id'])
+          }
+        })
+      }
+      function createCityObj(item, id) {
+          axios({
+              method: "GET",
+              url: "https://api.openweathermap.org/data/2.5/weather",
+              params: {
+              id,
+              units: "metric",
+              lang: "ru",
+              appid: "84bea86b6e84affc971c5ed48003ecea",
+              },
+          }).then((response) => {
+            let data = response.data
+            let obj = {
+              temp: `${Math.trunc(data.main.temp_min)}°C`,
+              icon: `https://openweathermap.org/img/wn/${data.weather[0].icon}@2x.png`,
+              isLoaded: true,
+            }
+            Object.assign(item, obj)
+      })
+    }
+  },
     getFavorites({ commit, dispatch }) {
       axios({
         method: "GET",
@@ -35,6 +65,7 @@ export const favoriteCityModule = {
         let data = response.data;
         commit("setFavoriteList", data.data);
         dispatch("checkIfInFav");
+        dispatch('getCitiesWeatherInfo')
       });
     },
     deleteCity({ dispatch }, e) {

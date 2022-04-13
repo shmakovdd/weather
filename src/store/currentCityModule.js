@@ -91,7 +91,7 @@ export const currentCityModule = {
           ctx.commit("setLon", data.coords.longitude);
           ctx.commit("setLat", data.coords.latitude);
           ctx.dispatch("getCurrentWeather");
-          ctx.dispatch("getDailyWeather");
+          ctx.dispatch("getDailyWeather", {});
         }
 
         ctx.commit("setDataLoaded", true);
@@ -132,14 +132,14 @@ export const currentCityModule = {
       ctx.commit("setCurrentCityData", obj);
     },
 
-    getDailyWeather({ state, commit }) {
+    getDailyWeather({ state, commit }, {lon, lat}) {
       commit("setDailyWeather", []);
       axios({
         method: "GET",
         url: "https://api.openweathermap.org/data/2.5/onecall",
         params: {
-          lat: state.lat,
-          lon: state.lon,
+          lat: lat || state.lat,
+          lon: lon || state.lon,
           units: "metric",
           lang: "ru",
           exclude: "current,minutely,hourly,alerts",
@@ -190,8 +190,7 @@ export const currentCityModule = {
         },
       }).then(response => {
         let data = response.data;
-
-        dispatch('getDailyWeather')
+        dispatch('getDailyWeather', {lon: data.coord.lon, lat: data.coord.lat})
         dispatch("setCurrentCityData", data);
         
       })

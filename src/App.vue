@@ -1,20 +1,21 @@
-/* eslint-disable */
-
 <template>
   <div class="app">
     <app-header/>
+    <favorite-briefly/>
     <router-view></router-view>
-  </div>
+  </div> 
 </template>
 
 <script>
 import AppHeader from '@/components/AppHeader'
+import FavoriteBriefly from '@/components/FavoriteBriefly'
 import { mapActions, mapMutations, mapState } from 'vuex'
 import {getCookie} from '@/store/utils'
 export default {
 
   components: {
     AppHeader,
+    FavoriteBriefly,
   },
   computed: {
     ...mapState({
@@ -38,7 +39,7 @@ export default {
   },
   mounted() {
     this.checkCookie()
-    this.isAuth && this.getFavorites()
+    this.isAuth && this.getFavorites();
   }
 
 }
