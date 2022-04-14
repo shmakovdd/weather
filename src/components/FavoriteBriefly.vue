@@ -48,12 +48,15 @@ export default {
             setCityID: 'current/setCityID'
         }),
         ...mapActions({
-        getCurrentWeatherById: 'current/getCurrentWeatherById'
+        getCurrentWeatherById: 'current/getCurrentWeatherById',
+        checkIfInFav: 'favorite/checkIfInFav'
         }),
         findCityByID(e) {
             this.getCurrentWeatherById(e.currentTarget.dataset.api_id)
-            this.$router.push('/')
             this.setCityID(e.currentTarget.dataset.id)
+            this.checkIfInFav()
+            this.$router.push('/')
+
         }
   },
 };
